@@ -1,0 +1,35 @@
+
+<!-- yarn-site.xml -->
+<configuration>
+
+  <!-- Enable MapReduce shuffle service -->
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+
+  <!-- Define the MapReduce shuffle handler -->
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+
+  <!-- Set ResourceManager hostname -->
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>resourcemanager</value>
+  </property>
+
+  <!-- Disable YARN access control lists -->
+  <property>
+    <name>yarn.acl.enable</name>
+    <value>false</value>
+  </property>
+
+  <!-- Define environment variables passed to containers -->
+  <property>
+    <name>yarn.nodemanager.env-whitelist</name>
+    <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PERPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
+  </property>
+
+</configuration>

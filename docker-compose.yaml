@@ -1,0 +1,146 @@
+
+services:
+  namenode:
+    image: apache/hadoop:3.5.0
+    container_name: namenode
+    hostname: namenode
+    user: root
+    volumes:
+      - ./namenode_data:/data/dfs/name
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+    ports:
+      - "9870:9870"
+      - "9000:9000"
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+      - HDFS_NAMENODE_USER=root
+    command: >
+      /bin/sh -c 'if [ ! -d "/data/dfs/name/current" ]; then
+                      echo "Formatting /data/dfs/name ..."
+                      hdfs namenode -format -force -nonInteractive
+                  fi
+                  echo "Launching NameNode service..."
+                  exec hdfs namenode'
+    restart: unless-stopped
+
+  datanode1:
+    image: apache/hadoop:3.5.0
+    container_name: datanode1
+    hostname: datanode1
+    user: root
+    volumes:
+      - ./datanode1_data:/data/dfs/data
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+      - HDFS_DATANODE_USER=root
+    command: /bin/sh -c "exec hdfs datanode"
+    restart: unless-stopped
+
+  datanode2:
+    image: apache/hadoop:3.5.0
+    container_name: datanode2
+    hostname: datanode2
+    user: root
+    volumes:
+      - ./datanode2_data:/data/dfs/data
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+      - HDFS_DATANODE_USER=root
+    command: /bin/sh -c "exec hdfs datanode"
+    restart: unless-stopped
+
+  datanode3:
+    image: apache/hadoop:3.5.0
+    container_name: datanode3
+    hostname: datanode3
+    user: root
+    volumes:
+      - ./datanode3_data:/data/dfs/data
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+      - HDFS_DATANODE_USER=root
+    command: /bin/sh -c "exec hdfs datanode"
+    restart: unless-stopped
+
+  resourcemanager:
+    image: apache/hadoop:3.5.0
+    container_name: resourcemanager
+    hostname: resourcemanager
+    user: root
+    volumes:
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+      - ./config/yarn-configs/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./config/yarn-configs/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+      - HDFS_NAMENODE_USER=root
+    ports:
+      - "8088:8088"
+    command: /bin/sh -c "exec yarn resourcemanager"
+    restart: unless-stopped
+
+  nodemanager:
+    image: apache/hadoop:3.5.0
+    container_name: nodemanager
+    hostname: nodemanager
+    user: root
+    volumes:
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+      - ./config/yarn-configs/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./config/yarn-configs/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+      - HDFS_DATANODE_USER=root
+    ports:
+      - "8042:8042"
+    command: /bin/sh -c "exec yarn nodemanager"
+    restart: unless-stopped
+
+  client:
+    image: apache/hadoop:3.5.0
+    container_name: hadoop-client
+    hostname: client
+    user: root
+    volumes:
+      - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+      - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
+      - ./config/yarn-configs/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml:ro
+      - ./config/yarn-configs/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml:ro
+      - ./:/workspace
+    environment:
+      - HADOOP_HOME=/opt/hadoop
+      - HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+      - HADOOP_LOG_DIR=/opt/hadoop/logs
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    command: /bin/sh -c "sleep infinity"
+    restart: unless-stopped
