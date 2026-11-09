@@ -1,4 +1,3 @@
-
 <!-- hdfs-site.xml -->
 <configuration>
 
@@ -11,30 +10,29 @@
   <!-- NameNode storage directory -->
   <property>
     <name>dfs.namenode.name.dir</name>
-    <value>./namenode_data:/opt/hadoop/data/name</value>
+    <value>file:///opt/hadoop/data/name</value>
   </property>
 
   <!-- DataNode storage directory -->
   <property>
     <name>dfs.datanode.data.dir</name>
-    <value>./datanode1_data:/opt/hadoop/data/data</value>
+    <value>file:///opt/hadoop/data/data</value>
+  </property>
+  
+  <property>
+    <name>dfs.heartbeat.interval</name>
+    <value>2</value>
   </property>
 
   <property>
-    <name>dfs.datanode.data.dir</name>
-    <value>./datanode2_data:/opt/hadoop/data/data</value>
-  </property>
-
-  <property>
-    <name>dfs.datanode.data.dir</name>
-    <value>./datanode3_data:/opt/hadoop/data/data</value>
+    <name>dfs.namenode.heartbeat.recheck-interval</name>
+    <value>10000</value>
   </property>
 
   <!-- Set HDFS block size -->
   <property>
     <name>dfs.blocksize</name>
     <value>4194304</value>
-    <description>Block size in bytes. Set to 4MB for educational purpose.</description>
   </property>
 
 </configuration>

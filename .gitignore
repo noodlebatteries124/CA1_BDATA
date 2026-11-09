@@ -3,3 +3,26 @@
 *.zip
 *.progress
 .*properties
+
+# Hadoop HDFS storage
+namenode_data/
+datanode1_data/
+datanode2_data/
+datanode3_data/
+
+# Hadoop runtime and logs
+logs/
+tmp/
+*.log
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Jupyter generated files
+.ipynb_checkpoints/
+
+*.conf
+
+*.txt

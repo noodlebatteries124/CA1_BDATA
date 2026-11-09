@@ -1,0 +1,4 @@
+Errors i encountered so far and how to fix them:
+for the configs, the file path in hdfs-site.xml and docker-compose.yaml was pointing wrongly to the different containers, causing them to constantly crash and reboot. To fix it, i just verified the right path and the containers stopped crashing. 
+
+In datagov_download.py, i couldnt run the file as there was data missing in september 11th in the carpark dataset. To fix it, i adjusted the code a little bit such that it could retry the downloads multiple times and as well as skip the existing download i had already done so that i wouldnt need to wait redownloading everything.

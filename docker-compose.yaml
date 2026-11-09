@@ -6,7 +6,7 @@ services:
     hostname: namenode
     user: root
     volumes:
-      - ./namenode_data:/data/dfs/name
+      - ./namenode_data:/opt/hadoop/data/name
       - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
       - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
       - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
@@ -19,9 +19,9 @@ services:
       - HADOOP_LOG_DIR=/opt/hadoop/logs
       - HDFS_NAMENODE_USER=root
     command: >
-      /bin/sh -c 'if [ ! -d "/data/dfs/name/current" ]; then
-                      echo "Formatting /data/dfs/name ..."
-                      hdfs namenode -format -force -nonInteractive
+      /bin/sh -c 'if [ ! -d "/opt/hadoop/data/name/current" ]; then
+                      echo "Formatting NameNode storage..."
+                      hdfs namenode -format -nonInteractive
                   fi
                   echo "Launching NameNode service..."
                   exec hdfs namenode'
@@ -33,7 +33,7 @@ services:
     hostname: datanode1
     user: root
     volumes:
-      - ./datanode1_data:/data/dfs/data
+      - ./datanode1_data:/opt/hadoop/data/data
       - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
       - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
       - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
@@ -51,7 +51,7 @@ services:
     hostname: datanode2
     user: root
     volumes:
-      - ./datanode2_data:/data/dfs/data
+      - ./datanode2_data:/opt/hadoop/data/data
       - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
       - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
       - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro
@@ -69,7 +69,7 @@ services:
     hostname: datanode3
     user: root
     volumes:
-      - ./datanode3_data:/data/dfs/data
+      - ./datanode3_data:/opt/hadoop/data/data
       - ./config/hdfs-configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
       - ./config/hdfs-configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
       - ./config/hdfs-configs/log4j.properties:/opt/hadoop/etc/hadoop/log4j.properties:ro

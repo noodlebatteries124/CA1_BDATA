@@ -1,4 +1,3 @@
-
 <!-- yarn-site.xml -->
 <configuration>
 
@@ -30,6 +29,24 @@
   <property>
     <name>yarn.nodemanager.env-whitelist</name>
     <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PERPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
+  </property>
+
+  <!-- Enable YARN log aggregation -->
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+
+  <!-- HDFS directory for aggregated logs -->
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/tmp/logs</value>
+  </property>
+
+  <!-- Retain aggregated logs for 7 days -->
+  <property>
+    <name>yarn.log-aggregation.retain-seconds</name>
+    <value>604800</value>
   </property>
 
 </configuration>
