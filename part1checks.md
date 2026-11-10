@@ -74,12 +74,12 @@ hadoop jar "$STREAMING_JAR" \
 
 # inspect output
 yarn application -list -appStates ALL
-yarn logs -applicationId application_1794193477344_0001
+yarn logs -applicationId application_1794193477344_0003
 
 # get output.txt
-yarn application -status application_1794196556591_0002
-hdfs dfs -ls /output/bus_od_demo_repeat
-hdfs dfs -get /output/bus_od_demo_repeat/part-00000 /workspace/userfiles/bus_od_results.txt
+yarn application -status application_1794196556591_0003
+hdfs dfs -ls /output/bus_od_demo1
+hdfs dfs -get /output/bus_od_demo1/part-00000 /workspace/userfiles/bus_od_results.txt
 
 2026-11-09 03:00:06,992 [main] WARN  org.apache.hadoop.hdfs.DFSClient  - Failed to connect to /172.18.0.4:9866 for file /input/rainfall_clean.csv for block BP-122732488-172.18.0.7-1794191139724:blk_1073741891_1067. Error is No route to host. Add to deadNodes and continue with other datanodes. 
 2026-11-09 03:00:07,022 [main] INFO  org.apache.hadoop.hdfs.DFSClient  - Successfully connected to /172.18.0.5:9866 for BP-122732488-172.18.0.7-1794191139724:blk_1073741891_1067
