@@ -48,8 +48,12 @@ docker restart datanode2
 hdfs dfsadmin -report
 hdfs dfs -ls /input
 
+hdfs dfs -cat /input/bus_od_clean.csv > /dev/null
+echo $?
+
 # block health and replica locations
 hdfs fsck /input -files -blocks -locations
+
 
 # check if yarn is ready
 yarn node -list -all
@@ -81,8 +85,6 @@ yarn application -status application_1794196556591_0003
 hdfs dfs -ls /output/bus_od_demo1
 hdfs dfs -get /output/bus_od_demo1/part-00000 /workspace/userfiles/bus_od_results.txt
 
-2026-11-09 03:00:06,992 [main] WARN  org.apache.hadoop.hdfs.DFSClient  - Failed to connect to /172.18.0.4:9866 for file /input/rainfall_clean.csv for block BP-122732488-172.18.0.7-1794191139724:blk_1073741891_1067. Error is No route to host. Add to deadNodes and continue with other datanodes. 
-2026-11-09 03:00:07,022 [main] INFO  org.apache.hadoop.hdfs.DFSClient  - Successfully connected to /172.18.0.5:9866 for BP-122732488-172.18.0.7-1794191139724:blk_1073741891_1067
-READ SUCCESS: /input/*.csv
+
 
 The MapReduce job processes the cleaned bus origin-destination dataset stored in HDFS. The Mapper reads each CSV record, skips the header, validates the fields and extracts the month, day type, origin bus stop ID, destination bus stop ID and total trips. It then generates a key using the month, day type, origin and destination, with the total trips as its value. The hour is intentionally excluded from the key because the objective is to aggregate trips across all hours. During the Shuffle and Sort phase, Hadoop automatically groups all intermediate records with identical keys and transfers them to the reducer. The Reducer receives each grouped key and sums its associated trip counts to calculate the total trips for that origin-destination pair. Finally, the aggregated results are written back to HDFS as part-00000, with _SUCCESS indicating that the job completed successfully.
