@@ -103,7 +103,10 @@ services:
     restart: unless-stopped
 
   nodemanager:
-    image: apache/hadoop:3.5.0
+    build:
+      context: .
+      dockerfile: Dockerfile.mrjob
+    image: ca1-hadoop-mrjob:3.5.0
     container_name: nodemanager
     hostname: nodemanager
     user: root
@@ -124,7 +127,10 @@ services:
     restart: unless-stopped
 
   client:
-    image: apache/hadoop:3.5.0
+    build:
+      context: .
+      dockerfile: Dockerfile.mrjob
+    image: ca1-hadoop-mrjob:3.5.0
     container_name: hadoop-client
     hostname: client
     user: root
