@@ -3,7 +3,7 @@
 ## Data provenance and cleaning
 
 The counts below are from the current `eda.ipynb` cleaning run and the CSV
-files in `CA1_Datasets`. They describe the files actually loaded by the
+files in `userfiles/CA1_Datasets`. They describe the files actually loaded by the
 notebook, not illustrative counts.
 
 ### Sources, files, periods, and row counts
@@ -37,7 +37,8 @@ workspace; no hashes have been invented.
 The notebook checks missing/blank values, full-row duplicates, analytical-key
 duplicates, timestamp parsing, numeric values, categories, and applicable
 coordinate/value ranges. Rows failing cleaning rules are written to
-`processed_data/quarantine/`; cleaned inputs are written to `processed_data/`.
+`userfiles/processed_data/quarantine/`; cleaned inputs are written to
+`userfiles/processed_data/`.
 
 | Dataset | Accepted | Excluded and reason |
 |---|---:|---|
@@ -86,7 +87,7 @@ expected station-days:
   eligible under that rule.
 
 The notebook exports the exact missing `(station_id, timestamp_local)` slots
-to `processed_data/reports/rainfall_missing_slots.csv` when the export cell is
+to `userfiles/processed_data/reports/rainfall_missing_slots.csv` when the export cell is
 run. Daily coverage and eligibility are also calculated in the notebook.
 
 ### Reference/mapping version

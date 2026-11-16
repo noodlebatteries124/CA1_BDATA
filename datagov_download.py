@@ -10,8 +10,8 @@ START = date(2026, 9, 1)
 END = date(2026, 9, 30)
 CARPARK_EVERY_HOURS = 1
 
-OUTPUT = Path("CA1_Datasets")
-OUTPUT.mkdir(exist_ok=True)
+OUTPUT = Path(__file__).resolve().parent / "userfiles" / "CA1_Datasets"
+OUTPUT.mkdir(parents=True, exist_ok=True)
 
 RAINFALL_URL = "https://api-open.data.gov.sg/v2/real-time/api/rainfall"
 CARPARK_URL = "https://api.data.gov.sg/v1/transport/carpark-availability"

@@ -89,9 +89,9 @@ hdfs dfs -put /workspace/userfiles/processed_data/rainfall_clean.csv /sg_mobilit
 > **Note:** Only run these commands if the corresponding local directories exist.
 
 ```bash
-hdfs dfs -put /workspace/userfiles/metadata/* /sg_mobility/metadata/
-hdfs dfs -put /workspace/userfiles/quarantine/* /sg_mobility/quarantine/
-hdfs dfs -put /workspace/userfiles/manifest/* /sg_mobility/manifest/
+hdfs dfs -put /workspace/userfiles/processed_data/metadata/* /sg_mobility/metadata/
+hdfs dfs -put /workspace/userfiles/processed_data/quarantine/* /sg_mobility/quarantine/
+hdfs dfs -put /workspace/userfiles/processed_data/manifest/* /sg_mobility/manifest/
 ```
 
 ### Verify Uploaded Datasets
