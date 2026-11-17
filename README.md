@@ -1,107 +1,71 @@
-# CA1 Big Data Analysis
+# CA1 Big Data Analysis — Data Provenance, Quality & Cleaning (`README.md`)
 
-## Data provenance and cleaning
+## 1. Data Provenance and Source Summary
 
-The counts below are from the current `eda.ipynb` cleaning run and the CSV
-files in `userfiles/CA1_Datasets`. They describe the files actually loaded by the
-notebook, not illustrative counts.
+The counts, observation periods, and SHA-256 fingerprints below come directly from the executed cleaning pipeline (`eda_cleaning_updates.py`), the raw files in `userfiles/CA1_Datasets/`, and the generated manifest (`userfiles/processed_data/manifest/manifest_sha256.csv`).
 
-### Sources, files, periods, and row counts
+### Sources, Files, Observation Periods, and Row Counts
 
-| Dataset | Input file | Source endpoint used | Observation period | Input = accepted + excluded |
-|---|---|---|---|---:|
-| Bus origin-destination | `origin_destination_bus_202609.csv` | [LTA DataMall PV/ODBus](https://datamall2.mytransport.sg/ltaodataservice/PV/ODBus), requested for `202609`; the API returned a temporary ZIP download link | September 2026 (`YEAR_MONTH = 2026-09`) | 5,863,920 = 5,863,920 + 0 |
-| Bus stops | `bus_stops.csv` | [LTA DataMall BusStops](https://datamall2.mytransport.sg/ltaodataservice/BusStops) | Static reference dataset; snapshot/as-of date to fill from manifest: ______ | 5,209 = 5,209 + 0 |
-| Rainfall | `rainfall_20260901_20260930.csv` | [data.gov.sg rainfall API](https://api-open.data.gov.sg/v2/real-time/api/rainfall) | 1 Sep 2026 00:00 through 30 Sep 2026 23:55, Asia/Singapore | 761,445 = 761,445 + 0 invalid rows |
-| Carpark availability | `carpark_20260901_20260930.csv` | [data.gov.sg carpark availability API](https://api.data.gov.sg/v1/transport/carpark-availability) | 1 Sep 2026 00:00:37 through 30 Sep 2026 23:00:36, Asia/Singapore; 720 hourly snapshots | 1,745,692 = 1,741,784 + 3,908 |
+| Dataset | Input File(s) | Source Endpoint Used | Actual Observation Period (Asia/Singapore, UTC+08:00) | Input = Accepted + Excluded (Retention %) |
+| :--- | :--- | :--- | :--- | ---: |
+| **Bus Origin–Destination (August 2026)** | `origin_destination_bus_202608.csv` | [LTA DataMall `PV/ODBus`](https://datamall2.mytransport.sg/ltaodataservice/PV/ODBus) (`Date=202608`) | August 2026 (`YEAR_MONTH = 2026-08`, aggregated by `DAY_TYPE` and `TIME_PER_HOUR` `0`–`23`) | `6,120,164 = 6,120,164 + 0` (`100.00%`) |
+| **Bus Origin–Destination (September 2026)** | `origin_destination_bus_202609.csv` | [LTA DataMall `PV/ODBus`](https://datamall2.mytransport.sg/ltaodataservice/PV/ODBus) (`Date=202609`) | September 2026 (`YEAR_MONTH = 2026-09`, aggregated by `DAY_TYPE` and `TIME_PER_HOUR` `0`–`23`) | `5,863,920 = 5,863,920 + 0` (`100.00%`) |
+| **Bus Origin–Destination (October 2026)** | `origin_destination_bus_202610.csv` | [LTA DataMall `PV/ODBus`](https://datamall2.mytransport.sg/ltaodataservice/PV/ODBus) (`Date=202610`) | October 2026 (`YEAR_MONTH = 2026-10`, aggregated by `DAY_TYPE` and `TIME_PER_HOUR` `0`–`23`) | `5,935,719 = 5,935,719 + 0` (`100.00%`) |
+| **Bus Origin–Destination (Combined 3 Months)** | `bus_od_clean.csv` | Combined canonical output of `2026-08`, `2026-09`, and `2026-10` | August, September, and October 2026 (`3` months) | `17,919,803 = 17,919,803 + 0` (`100.00%`) |
+| **Bus Stops Metadata** | `bus_stops.csv` | [LTA DataMall `BusStops`](https://datamall2.mytransport.sg/ltaodataservice/BusStops) (`$skip` pagination in batches of 500) | Static reference snapshot retrieved November 2026 (`5,209` unique stops) | `5,209 = 5,209 + 0` (`100.00%`) |
+| **NEA Station Rainfall** | `rainfall_20260901_20260930.csv` | [data.gov.sg Real-Time Rainfall API v2](https://api-open.data.gov.sg/v2/real-time/api/rainfall) | `2026-09-01 00:00:00+08:00` through `2026-09-30 23:55:00+08:00` (`89` stations, 5-min cadence) | `761,445 = 761,445 + 0` (`100.00%`) |
+| **HDB Carpark Availability** | `carpark_20260901_20260930.csv` | [data.gov.sg Carpark Availability API v1](https://api.data.gov.sg/v1/transport/carpark-availability) | `2026-09-01 00:00:37+08:00` through `2026-09-30 23:00:36+08:00` (`720` hourly snapshots, `CARPARK_EVERY_HOURS = 1`) | `1,745,692 = 1,741,784 + 3,908` (`99.78%`) |
 
-The acquisition endpoints are visible in `lta_data_download.py` and
-`datagov_download.py`. Verify these against the lecturer's frozen dataset
-manifest before submission.
+* **Explicit Source Grain & Date-Window Note (Appendix A Compliance):** LTA Bus OD records represent monthly passenger volume aggregates grouped by `YEAR_MONTH`, `DAY_TYPE` (`WEEKDAY` vs. `WEEKENDS/HOLIDAY`), and clock hour (`0`–`23`) across three months (`2026-08`, `2026-09`, `2026-10`); they contain no individual journey dates, fares, or durations and are never joined to 5-minute rainfall or hourly carpark snapshots. NEA Rainfall and HDB Carpark Availability cover the matching 30-day period of **1–30 September 2026** in `Asia/Singapore` (`UTC+08:00`), enabling the time-aligned hourly weather–parking join in Question M4.
 
-### Pinned manifest fingerprints
+## 2. Pinned Manifest SHA-256 Fingerprints
 
-SHA-256 values must be copied from the lecturer-provided manifest. They are
-intentionally left blank because that manifest is not present in this
-workspace; no hashes have been invented.
+Generated by `eda_cleaning_updates.py` and stored in `userfiles/processed_data/manifest/manifest_sha256.csv` (and uploaded to `/sg_mobility/manifest/manifest_sha256.csv` in HDFS):
 
-| Input file | Lecturer manifest SHA-256 |
-|---|---|
-| `origin_destination_bus_202609.csv` | |
-| `bus_stops.csv` | |
-| `rainfall_20260901_20260930.csv` | |
-| `carpark_20260901_20260930.csv` | |
+| File Name | Role / Location | Size (Bytes) | SHA-256 Hash Fingerprint |
+| :--- | :--- | ---: | :--- |
+| `origin_destination_bus_202608.csv` | Raw LTA Bus OD (Aug 2026) | `252,004,056` | `00735e24e141ece247a1aee836dbd42dc3b379df52d6dc2a2a1026642a16c28a` |
+| `origin_destination_bus_202609.csv` | Raw LTA Bus OD (Sep 2026) | `239,594,439` | `1b45454a55e04051aa7ad1f678b209c0b4ca96e3f9ce9e38ea96223a5d7c6030` |
+| `origin_destination_bus_202610.csv` | Raw LTA Bus OD (Oct 2026) | `242,983,977` | `38e390dfe0ba41a609311bca023da86ebc39e27dd0679de48c55f41162a1de46` |
+| `bus_stops.csv` | Raw LTA Bus Stops Metadata | `357,508` | `711889094d5b7ca4588d23643beae1e2afe9233bf56c85a33761e2c97ee13baf` |
+| `rainfall_20260901_20260930.csv` | Raw NEA 5-Min Rainfall (Sep 2026) | `51,584,840` | `e61a74d98bac6b4b1ede00547e7338511538378c163caedc68e5b0ea26eea04d` |
+| `carpark_20260901_20260930.csv` | Raw HDB Carpark Snapshots (Sep 2026) | `105,658,614` | `9b4af13d990b9c702f241a8d4d4cdd3154a6ac66a9258bf0ef084600a27f0664` |
+| `bus_od_clean.csv` | Canonical 3-Month Bus OD | `752,502,098` | `379f9dde7406ddd6db40f06bb9abe66298baa2a85d2dae89c4ad5172eca2424b` |
+| `bus_stops_clean.csv` | Canonical Bus Stops Metadata | `357,116` | `67966d5f50053e69b206e447664c06ada39ca07413a54883d814296364cb2896` |
+| `rainfall_clean.csv` | Canonical NEA Rainfall | `53,082,425` | `3078a9008d6279d0c13f85d1648e3bed594bdecd7bc8729ad84e5b9abd78f99a` |
+| `carpark_clean.csv` | Canonical HDB Carpark Availability | `105,431,947` | `c4b006adbc4cbd076258a3834fbb9201b7ca7e09d61245edc4a040040795d79b` |
 
-### Cleaning and exclusions
+## 3. Data Cleaning, Quarantine Rules, and Exclusions
 
-The notebook checks missing/blank values, full-row duplicates, analytical-key
-duplicates, timestamp parsing, numeric values, categories, and applicable
-coordinate/value ranges. Rows failing cleaning rules are written to
-`userfiles/processed_data/quarantine/`; cleaned inputs are written to
-`userfiles/processed_data/`.
+Rows failing validation are isolated into `userfiles/processed_data/quarantine/*_quarantine.csv` with pipe-delimited `quarantine_reason` codes (`MISSING_REQUIRED_VALUE`, `INVALID_CAPACITY`, `AVAILABLE_EXCEEDS_CAPACITY`, `DUPLICATE_ANALYTICAL_KEY`, etc.) and uploaded to `/sg_mobility/quarantine/` in HDFS.
 
-| Dataset | Accepted | Excluded and reason |
-|---|---:|---|
-| Bus origin-destination | 5,863,920 | 0: no missing required fields, invalid month/category/hour/trip values, or duplicate analytical keys |
-| Bus stops | 5,209 | 0: no missing required fields, out-of-range coordinates, or duplicate bus-stop codes |
-| Rainfall | 761,445 | 0: no missing required fields, negative/unparseable rainfall, misaligned timestamps, or duplicate station/timestamp keys |
-| Carpark availability | 1,741,784 | 3,188 with non-positive capacity; 720 where available lots exceeded total capacity; 0 duplicate observation keys |
+| Dataset | Clean Rows Used | Excluded (Quarantined) Rows & Specific Reasons |
+| :--- | ---: | :--- |
+| **Bus OD (`2026-08` to `2026-10`)** | `17,919,803` | `0` excluded: all rows have valid `YEAR_MONTH`, `DAY_TYPE` (`WEEKDAY` or `WEEKENDS/HOLIDAY`), `PT_TYPE == "BUS"`, integer `TIME_PER_HOUR` in `0`–`23`, `TOTAL_TRIPS >= 0`, and `0` duplicate `(YEAR_MONTH, DAY_TYPE, TIME_PER_HOUR, PT_TYPE, ORIGIN_PT_CODE, DESTINATION_PT_CODE)` keys. |
+| **Bus Stops** | `5,209` | `0` excluded: all `5,209` bus stop codes are unique strings (preserving leading zeroes such as `01012`), with non-empty descriptions and valid WGS84 coordinates. |
+| **Rainfall** | `761,445` | `0` excluded: all readings have valid `station_id`, non-negative `rainfall_mm >= 0`, exact 5-minute aligned timestamps (`minute in {0,5,...,55}`, `second == 0`), and `0` duplicate `(station_id, timestamp)` keys. |
+| **Carpark Availability** | `1,741,784` | **`3,908` excluded** (`0.22%`): **`3,188` rows** quarantined with `INVALID_CAPACITY` (`total_lots <= 0`, e.g., carparks `PL40`, `JM33`, `PL57`, `A33` reporting `0` total capacity) and **`720` rows** quarantined with `AVAILABLE_EXCEEDS_CAPACITY` (`lots_available > total_lots`, e.g., carpark `A88` lot type `Y` reporting `64` available out of `46` total lots across all 720 hourly snapshots). `0` duplicate `(carpark_number, lot_type, snapshot_time)` keys. |
 
-Carpark exclusions total 3,908 unique rows. The carpark observation key is
-`(carpark_number, lot_type, snapshot_time)`. Repeated `update_datetime` values
-across different snapshot times are not treated as duplicate observations.
-For other datasets, all records belonging to a duplicated analytical key are
-quarantined rather than arbitrarily keeping one.
+### Unmatched Bus Stop Codes Disclosure (Referential Integrity)
 
-The Bus OD data contains 7,995 rows with at least one endpoint code absent from
-the supplied BusStops file (3,542 unmatched origin references, 4,500 unmatched
-destination references, with 47 rows unmatched at both ends). These rows are
-retained, not silently excluded: the available files do not establish whether
-the codes are invalid or simply absent from this BusStops snapshot. Reconcile
-against the lecturer's reference data before using this as an exclusion rule.
+In accordance with Appendix A (*"Preserve unmatched historic stop IDs; current metadata may not cover closed stops"*) and Question M1 (*"disclose unmatched stops"*), Bus OD records referencing stop codes absent from `bus_stops.csv` are **retained** in `bus_od_clean.csv` and explicitly disclosed in both `userfiles/processed_data/reports/bus_od_unmatched_stops.csv` and the `UNMATCHED_DISCLOSURE` output rows of `m1_results.txt`:
 
-### Timezones and rainfall slots
+* **Unmatched stop codes identified across `2026-08`, `2026-09`, and `2026-10`:** `07522`, `44711`, `67689`, `67708`, `67759`, and `70372` (primarily newly opened or renumbered Sengkang/Punggol/Tengah stops and temporary interchanges not yet reflected in the static `bus_stops.csv` snapshot).
+* **Per-month unmatched corridor breakdown (from `m1_results.txt`):**
+  * `2026-08 WEEKDAY`: `325` unmatched directed pairs (`171,407` trips); `2026-08 WEEKENDS/HOLIDAY`: `335` pairs (`76,305` trips)
+  * `2026-09 WEEKDAY`: `326` unmatched directed pairs (`182,627` trips); `2026-09 WEEKENDS/HOLIDAY`: `346` pairs (`56,437` trips)
+  * `2026-10 WEEKDAY`: `326` unmatched directed pairs (`163,548` trips); `2026-10 WEEKENDS/HOLIDAY`: `306` pairs (`48,679` trips)
 
-Rainfall and carpark `snapshot_time` values are interpreted and exported in
-`Asia/Singapore` (UTC+08:00). The carpark API's `update_datetime` values do not
-carry an offset; the freshness check compares them as Singapore-local time.
-Under that assumption, 2,162 accepted carpark rows have an update time later
-than their snapshot time. They are not excluded because the source timezone
-semantics and an acceptable tolerance have not been confirmed.
+## 4. Timezone Normalisation, Slot Alignment & Missing-Data Rules
 
-Rainfall observations are assigned to five-minute slots by
-`(station_id, timestamp in Asia/Singapore)`. A complete ordinary day has 288
-slots, from 00:00 through 23:55. Duplicate station/timestamp rows are
-quarantined; no such duplicates were found in this input. Missing observations
-are recorded, never filled or simulated.
-
-For 89 observed stations over 30 days, the expected grid contains 768,960
-station-slots. There are 761,445 observed and 7,515 missing slots. Of the 2,670
-expected station-days:
-
-- 2,483 have all 288 slots.
-- 187 have at least one missing slot.
-- 39 have fewer than 260 slots and are marked ineligible for ranking under the
-  notebook's current rule; 16 of these have no readings.
-- The remaining 148 incomplete station-days have 260-287 slots and remain
-  eligible under that rule.
-
-The notebook exports the exact missing `(station_id, timestamp_local)` slots
-to `userfiles/processed_data/reports/rainfall_missing_slots.csv` when the export cell is
-run. Daily coverage and eligibility are also calculated in the notebook.
-
-### Reference/mapping version
-
-Carpark-to-weather-station mapping file used:  
-Mapping file version (from lecturer manifest):  
-
-The mapping/version information is not available in this workspace. Fill these
-fields from the lecturer's frozen manifest before submission. No mapping is
-assumed in the EDA cleaning described above.
-
-### Other provenance information to fill from the frozen manifest
-
-- Lecturer's manifest filename/location:
-- Dataset release/version or frozen-bundle identifier:
-- BusStops reference snapshot/as-of date:
-- Any additional source URLs or file-level notes supplied by the lecturer:
+* **Timezone (`Asia/Singapore`, `UTC+08:00`):** All rainfall `timestamp` and carpark `snapshot_time` values are normalised to `Asia/Singapore` (`UTC+08:00`) before validation so both `*_clean.csv` and `*_quarantine.csv` preserve Singapore local calendar dates and clock hours.
+* **Rainfall 5-Minute Slot Alignment & Missing-Data Rule (Question M2):**
+  * A complete ordinary day contains **288 expected 5-minute intervals** (`00:00` through `23:55`).
+  * Across `89` active weather stations over `30` days in September 2026, the complete expected grid has `89 × 30 = 2,670` station-days (`768,960` expected 5-minute station-slots).
+  * Exactly **`761,445` valid unique station-slots** were observed and **`7,515` slots are missing** (exported in `userfiles/processed_data/reports/rainfall_missing_slots.csv`). Missing readings are never filled or simulated.
+  * Out of `2,670` expected station-days:
+    * **`2,631` station-days are eligible for M2 ranking** (`>= 90%` coverage, i.e., `>= 260` out of `288` valid slots; `2,483` have all `288` slots and `148` have `260`–`287` slots).
+    * **`39` station-days fall below the 90% threshold** (`< 260` slots): `16` station-days (station `S900` Seletar from 1–16 Sep) have `0` observations in the raw file, and **`23` partial station-days** have between `66` and `252` slots (`22.92%` to `87.50%` coverage, including `S305` on 22 Sep with `52.0 mm` across `156` slots / `54.17%` coverage) and are retained separately under `PARTIAL_DAY` in `m2_results.txt`.
+* **Carpark Irregular Sampling & Lot Type C Filtering (Question M3):**
+  * Carpark records are validated across all lot types first (`1,741,784` valid rows), then filtered to **Lot Type `C`** (`1,440,824` valid records across `2,005` unique carparks) for M3 and M4.
+  * Because snapshots were polled hourly (`720` snapshots across 30 days, typically `24` observations per carpark-day), M3's mean occupancy ratio, maximum occupancy ratio, and high-pressure fraction (`occupancy >= 0.90`) are **sample-weighted point-in-time measures**, not continuous parking duration or vehicle arrival counts.
